@@ -57,6 +57,9 @@ export default async ({ req, res, log, error }) => {
     }
 
     log(`Email sent successfully: ${JSON.stringify(data)}`);
+    return res.json({
+      message: 'Mensaje enviado correctamente',
+    });
 
 
 
@@ -64,17 +67,5 @@ export default async ({ req, res, log, error }) => {
     error("Could not list users: " + err.message);
     return res.json({ success: false, message: `Error al enviar el mensaje: ${err.message || 'Error desconocido'}` });
   }
-
-  // The req object contains the request data
-  if (req.path === "/ping") {
-    // Use res object to respond with text(), json(), or binary()
-    // Don't forget to return a response!
-    return res.text("Pong");
-  }
-
-  res.json({
-    message: 'Mensaje enviado correctamente',
-  });
-
 
 };
