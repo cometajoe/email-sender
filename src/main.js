@@ -53,19 +53,19 @@ export default async ({ req, res, log, error }) => {
 
     if (error) {
       log(`Error sending email via Resend: ${error.message}`);
-      return res.json({ success: false, message: `Error al enviar el mensaje: ${error.message || 'Error desconocido de Resend'}` });
+      return res.json({ "success": "false", "message": `Error al enviar el mensaje: ${error.message || 'Error desconocido de Resend'}` });
     }
 
     log(`Email sent successfully: ${JSON.stringify(data)}`);
     return res.json({
-      message: 'Mensaje enviado correctamente',
+      "message": "Mensaje enviado correctamente",
     });
 
 
 
   } catch (err) {
     error("Could not list users: " + err.message);
-    return res.json({ success: false, message: `Error al enviar el mensaje: ${err.message || 'Error desconocido'}` });
+    return res.json({ "success": "false", "message": `Error al enviar el mensaje: ${err.message || 'Error desconocido'}` });
   }
 
 };
