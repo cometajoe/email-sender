@@ -52,12 +52,12 @@ export default async ({ req, res, log, error }) => {
     });
 
     if (error) {
-     log(`Error sending email via Resend: ${error.message}`);
+      log(`Error sending email via Resend: ${error.message}`);
       return res.json({ success: false, message: `Error al enviar el mensaje: ${error.message || 'Error desconocido de Resend'}` });
     }
 
-   log(`Email sent successfully: ${JSON.stringify(data)}`);
-   
+    log(`Email sent successfully: ${JSON.stringify(data)}`);
+
 
 
   } catch (err) {
@@ -72,5 +72,9 @@ export default async ({ req, res, log, error }) => {
     return res.text("Pong");
   }
 
- res.json({ success: true, message: 'Mensaje enviado correctamente.' });
+  res.json({
+    message: 'Mensaje enviado correctamente',
+  });
+
+
 };
