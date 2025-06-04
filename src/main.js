@@ -15,7 +15,7 @@ export default async ({ req, res, log, error }) => {
     // Log messages and errors to the Appwrite Console
     // These logs won't be seen by your end users
     log(`Total users: ${response.total}`);
-    log(`Request: ${req}`);
+   
   } catch(err) {
     error("Could not list users: " + err.message);
   }
@@ -32,5 +32,6 @@ export default async ({ req, res, log, error }) => {
     learn: "https://appwrite.io/docs",
     connect: "https://appwrite.io/discord",
     getInspired: "https://builtwith.appwrite.io",
+    requestOne: `${req.method} ${req.path}`,
   });
 };
