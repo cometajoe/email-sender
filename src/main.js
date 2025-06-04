@@ -53,16 +53,16 @@ export default async ({ req, res, log, error }) => {
 
     if (error) {
       console.error('Error al enviar el email con Resend (desde respuesta Resend):', error);
-      return res.status(400).json({ success: false, message: `Error al enviar el mensaje: ${error.message || 'Error desconocido de Resend'}` });
+      return res.json({ success: false, message: `Error al enviar el mensaje: ${error.message || 'Error desconocido de Resend'}` });
     }
 
     console.log('Email enviado exitosamente via Resend. ID:', data ? data.id : 'N/A');
-    res.status(200).json({ success: true, message: 'Mensaje enviado correctamente.' });
+    res.json({ success: true, message: 'Mensaje enviado correctamente.' });
 
 
   } catch (err) {
     error("Could not list users: " + err.message);
-    return res.status(500).json({ success: false, message: `Error al enviar el mensaje: ${err.message || 'Error desconocido'}` });
+    return res.json({ success: false, message: `Error al enviar el mensaje: ${err.message || 'Error desconocido'}` });
   }
 
   // The req object contains the request data
