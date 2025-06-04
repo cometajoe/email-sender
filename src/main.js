@@ -32,6 +32,6 @@ export default async ({ req, res, log, error }) => {
     learn: "https://appwrite.io/docs",
     connect: "https://appwrite.io/discord",
     getInspired: "https://builtwith.appwrite.io",
-    requestOne: `${req.method} ${req.path}`,
+    requestOne: `${req.method} ${req.body}`,
   });
 };
