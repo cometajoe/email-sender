@@ -1,4 +1,5 @@
 import { Client, Users } from 'node-appwrite';
+import { Resend } from 'resend';
 
 // This Appwrite function will be executed every time your function is triggered
 export default async ({ req, res, log, error }) => {
@@ -11,13 +12,57 @@ export default async ({ req, res, log, error }) => {
   const users = new Users(client);
 
   try {
-    const response = await users.list();
-    // Log messages and errors to the Appwrite Console
-    // These logs won't be seen by your end users
-    log(`Total users: ${response.total}`);
-   
-  } catch(err) {
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const { name, email, reason, message } = req.body;
+    const subject = `Nuevo Contacto: ${reason || 'General'} - De: ${name}`;
+    log(`Received contact form submission: ${JSON.stringify(name)}`);
+
+    // Construct the email body correctly
+    const emailHtmlBody = `
+      <h1>Nuevo Mensaje del Formulario de Contacto</h1>
+      <p><strong>Nombre:</strong> ${name}</p>
+      <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+      <p><strong>Motivo:</strong> ${reason || 'No especificado'}</p>
+      <hr>
+      <p><strong>Mensaje:</strong></p>
+      <p>${message.replace(/\n/g, '<br>')}</p>
+      <hr>
+      <p><em>Este correo fue enviado desde el formulario de contacto de la web Pies Contentos.</em></p>
+    `;
+
+    const emailTextBody = `
+      Nuevo Mensaje del Formulario de Contacto:
+      Nombre: ${name}
+      Email: ${email}
+      Motivo: ${reason || 'No especificado'}
+      Mensaje:
+      ${message}
+
+      Este correo fue enviado desde el formulario de contacto de la web Pies Contentos.
+    `;
+
+    const { data, error } = await resend.emails.send({
+      from: 'Pies contentos <onboarding@resend.dev>', // e.g., "Pies Contentos Web <noreply@yourdomain.com>"
+      to: [process.env.RECIPIENT_EMAIL], // Array of recipient emails
+      subject: subject,
+      html: emailHtmlBody,
+      text: emailTextBody, // Optional: include a plain text version
+      reply_to: email, // Set the user's email as the reply-to address
+    });
+
+    if (error) {
+      console.error('Error al enviar el email con Resend (desde respuesta Resend):', error);
+      return res.status(400).json({ success: false, message: `Error al enviar el mensaje: ${error.message || 'Error desconocido de Resend'}` });
+    }
+
+    console.log('Email enviado exitosamente via Resend. ID:', data ? data.id : 'N/A');
+    res.status(200).json({ success: true, message: 'Mensaje enviado correctamente.' });
+
+
+  } catch (err) {
     error("Could not list users: " + err.message);
+    return res.status(500).json({ success: false, message: `Error al enviar el mensaje: ${err.message || 'Error desconocido'}` });
   }
 
   // The req object contains the request data
@@ -27,11 +72,5 @@ export default async ({ req, res, log, error }) => {
     return res.text("Pong");
   }
 
-  return res.json({
-    motto: "Build like a team of hundreds_",
-    learn: "https://appwrite.io/docs",
-    connect: "https://appwrite.io/discord",
-    getInspired: "https://builtwith.appwrite.io",
-    requestOne: `${req.method} ${JSON.stringify( req.body)}`,
-  });
+
 };
